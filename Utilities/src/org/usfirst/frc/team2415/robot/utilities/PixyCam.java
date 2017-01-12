@@ -21,9 +21,15 @@ public class PixyCam {
 	 * @param DigitalPort the digital input port
 	 * @param goal the value that the pixy returns when it is perfectly lined up
 	 */
-	public PixyCam(int AnalogPort, int DigitalPort, double goal){
+	public PixyCam(int AnalogPort, int DigitalPort){
 		pixyAim = new AnalogInput(0);
 		pixyBool = new DigitalInput(0);
+	}
+	
+	/**
+	* setter for the goal
+	*/
+	public void setGoal(double goal){
 		this.goal = goal;
 	}
 	
