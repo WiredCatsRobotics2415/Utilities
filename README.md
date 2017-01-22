@@ -1,3 +1,9 @@
+How to Use:
+=================
+1. Download as .zip file
+2. Copy the folder with all the classes in it
+3. Paste it into the src package of your robot project
+
 SmoothPathPlanner (Falcon Classes)
 =================
 
