@@ -21,8 +21,8 @@ public class PixyCam {
 	 * @param DigitalPort the digital input port
 	 */
 	public PixyCam(int AnalogPort, int DigitalPort){
-		pixyAim = new AnalogInput(0);
-		pixyBool = new DigitalInput(0);
+		pixyAim = new AnalogInput(AnalogPort);
+		pixyBool = new DigitalInput(DigitalPort);
 	}
 	
 	/**
@@ -32,7 +32,7 @@ public class PixyCam {
 		this.goal = goal;
 	}
 	
-	public double pixyPOut(double kP, double steadyState){
+	public double POut(double kP, double steadyState){
 		if (Math.abs(getError()) < steadyState){
 			return 0;
 		} else {
