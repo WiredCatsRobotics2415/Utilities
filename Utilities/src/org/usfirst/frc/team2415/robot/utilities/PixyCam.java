@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2415.robot.utilities;
 
+import java.util.LinkedList;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -15,7 +17,15 @@ public class PixyCam implements PIDSource {
 	AnalogInput pixyAim;
 	DigitalInput pixyBool;
 	double goal;
-	
+	int kSampleSize = 25;
+	double kTolerance = 0.5;
+	static double prev;
+	double coeff = 0.5;
+	boolean test = true;
+	double maxErr = 1; //this is some made up value. adjust as needed
+	double error = 0;
+	double prevError = 0;
+	double prev1;
 	/**
 	 * Constructor for the PixyCam object
 	 * TODO: set port values
@@ -58,23 +68,38 @@ public class PixyCam implements PIDSource {
 		return pixyAim.getVoltage();
 	}
 	
+	public double getRavi(){
+		prev1 =  Math.abs(prev1-get()) > maxErr ? prev1 : get();
+		return prev1;
+	}
+	
+	public double getFiltered(){
+		prev = coeff*get() + (1 - coeff)*prev;
+		return prev;
+	}
+	
+	public double getPrime(){
+		return getTarget() ? get() : 0;
+	}
+	
 	/**
 	 * basically only do vision if you can see the target
 	 * @return the error if the target is in bounds, otherwise 0
 	 */
 	public double getErrorPrime(){
-		if (getTarget()) return getError();
-		else return 0;
+		return getTarget() ? getError() : 0;
 	}
 	
 	/**
 	 * finds the offset of the pixy from it's target
 	 * @return current pixy position - target position
 	 */
-	public double getError(){
-		return goal - get();
+	public double getError(){		
+		error =  Math.abs(goal - get()) > maxErr ? prevError : (goal - get());
+		prevError = error;
+		return error;
 	}
-
+	
 	@Override
 	public void setPIDSourceType(PIDSourceType pidSource) {
 		// TODO Auto-generated method stub
@@ -88,7 +113,12 @@ public class PixyCam implements PIDSource {
 	@Override
 	public double pidGet() {
 		// TODO Auto-generated method stub
-		return get();
+		if(Math.abs(getError()) <= kTolerance) {
+			return getFiltered();
+		} else {
+			prev = get();
+			return get();
+		}
 	}
 	
 
